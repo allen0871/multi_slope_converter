@@ -44,13 +44,25 @@ module main (clk, rst, zeroLevel, mediaLevel, highLevel ,sp512, sn512, sn64, sp8
     clkgen #(.DIVWIDTH(9)) c100k(clk,rst,9'd124, clk100k);
     clkgen #(.DIVWIDTH(9)) cms(clk100k,rst,9'd49,ms);
     siggen gen(.clk1ms(ms),.rst(rst),.npl(10'd2),.zero(szero),.runup(sinput),.start(start));
-    pwmgen #(.PERIOD(249)) pwmN(.clk(clk), .rst(start), .reload(clk100k), .enable(sinput), .mode(modeN), .pwm(sn512), .modeA(wpwmNA), .modeB(wpwmNB));
-    pwmgen #(.PERIOD(249)) pwmP(.clk(clk), .rst(start), .reload(clk100k), .enable(sinput), .mode(modeP), .pwm(runupw), .modeA(wpwmPA), .modeB(wpwmPB)); 
+    pwmgen #(.PERIOD(249)) pwmN(.clk(clk), .rst(rst),.start(start), .reload(clk100k), .enable(sinput), .mode(modeN), .pwm(sn512), .modeA(wpwmNA), .modeB(wpwmNB));
+    pwmgen #(.PERIOD(249)) pwmP(.clk(clk), .rst(rst),.start(start), .reload(clk100k), .enable(sinput), .mode(modeP), .pwm(runupw), .modeA(wpwmPA), .modeB(wpwmPB)); 
 
     always @(posedge clk or negedge rst)
     begin
         if(!rst) begin
             status <= IDLE;
+            sn64 <= 1'b0;
+            rundownreg <= 1'b0;
+            sp8 <= 1'b0;
+            sn1 <= 1'b0;
+            stpwmNA <= 32'b0;
+            stpwmNB <= 32'b0;
+            stpwmPA <= 32'b0;
+            stpwmPB <= 32'b0;
+            strundown <= 12'b0;
+            stN64 <= 8'b0;
+            stP8 <= 8'b0;
+            stN1 <= 8'b0;
         end
         else begin
             case(status)
@@ -108,6 +120,7 @@ module main (clk, rst, zeroLevel, mediaLevel, highLevel ,sp512, sn512, sn64, sp8
             sp8 <= 1'b0;
             sn64 <= 1'b0;
             rundownreg <= 1'b0;
+            status <= IDLE;
         end
     end
 
@@ -119,10 +132,10 @@ module main (clk, rst, zeroLevel, mediaLevel, highLevel ,sp512, sn512, sn64, sp8
            stpwmNB <= wpwmNB;
            stpwmPA <= wpwmPA;
            stpwmPB <= wpwmPB;
-           strundown <= trundown;
-           stN64 <= tN64;
-           stP8 <= tP8;
-           stN1 <= tN1;
+           strundown <= trundown + 12'b1;
+           stN64 <= tN64 + 8'b1;
+           stP8 <= tP8 + 8'b1;
+           stN1 <= tN1 + 8'b1;
            trundown <= 12'b0;
            tN64 <= 8'b0;
            tP8 <= 8'b0;

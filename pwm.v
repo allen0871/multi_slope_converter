@@ -1,10 +1,10 @@
 module pwmgen 
 #(parameter PERIOD = 10'd259) 
 (
-    clk, rst, reload, enable, mode, pwm, modeA, modeB
+    clk, rst, start, reload, enable, mode, pwm, modeA, modeB
 );
 
-input clk,reload, enable, mode, rst;
+input clk,reload, enable, mode, rst, start;
 output reg pwm;
 output reg [31:0] modeA;
 output reg [31:0] modeB;
@@ -42,7 +42,15 @@ begin
     end
 end
 
-always @(posedge rst)
+always @(rst) 
+begin
+    modeA <= 32'b0;
+    modeB <= 32'b0;
+    count <= 10'b0;
+    pwm <= 1'b0;  
+end
+
+always @(posedge start)
 begin
     modeA <= 32'b0;
     modeB <= 32'b0;
