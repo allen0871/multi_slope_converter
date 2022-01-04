@@ -1,5 +1,5 @@
 echo "开始编译"
-iverilog -o wave ./clkgen.v test_tb.v siggen.v pwm.v main.v
+iverilog -o wave ./clkgen.v test_tb.v siggen.v pwm.v main.v spi.v
 echo "编译完成"
 
 echo "生成波形文件"

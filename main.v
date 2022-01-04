@@ -1,7 +1,11 @@
-module main (clk, rst, zeroLevel, mediaLevel, highLevel ,sp512, sn512, sn64, sp8, sn1, sinput, szero);
+module main (clk, rst, zeroLevel, mediaLevel, highLevel ,sp512, sn512, sn64, sp8, sn1, sinput, szero, ,sck,cs,miso,mosi);
     input clk, rst, zeroLevel, mediaLevel, highLevel;
     output wire sp512, sn512, sinput, szero;
     output reg sn64,sp8, sn1;
+    input wire sck;
+    input wire cs;
+    output wire miso;
+    input wire mosi;
 
     parameter            IDLE   = 3'd0 ;
     parameter            RUNUP   = 3'd1 ;
@@ -46,6 +50,7 @@ module main (clk, rst, zeroLevel, mediaLevel, highLevel ,sp512, sn512, sn64, sp8
     siggen gen(.clk1ms(ms),.rst(rst),.npl(10'd2),.zero(szero),.runup(sinput),.start(start));
     pwmgen #(.PERIOD(249)) pwmN(.clk(clk), .rst(rst),.start(start), .reload(clk100k), .enable(sinput), .mode(modeN), .pwm(sn512), .modeA(wpwmNA), .modeB(wpwmNB));
     pwmgen #(.PERIOD(249)) pwmP(.clk(clk), .rst(rst),.start(start), .reload(clk100k), .enable(sinput), .mode(modeP), .pwm(runupw), .modeA(wpwmPA), .modeB(wpwmPB)); 
+    spi aaa(.stpwmNA(stpwmNA), .stpwmNB(stpwmNB), .stpwmPA(stpwmPA), .stpwmPB(stpwmPB), .strundown(strundown), .stN64(stN64), .stP8(stP8), .stN1(stN1), .sck(sck), .cs(cs),.mosi(mosi), .miso(miso));
 
     always @(posedge clk or negedge rst)
     begin
