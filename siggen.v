@@ -2,7 +2,7 @@ module siggen (
     clk1ms, rst, npl, zero, runup, start
 );
 
-input clk1ms,clk20ms, rst;
+input clk1ms, rst;
 input wire [9:0] npl;
 output reg runup;
 output reg zero;
